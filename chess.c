@@ -327,6 +327,128 @@ bool black_check(int king_row, int king_col) {
     return false;
 }
 
+bool white_checkmate_xwrap(int row_val, int col_val){
+        if ((!board[row_val][col_val]) ){
+            return white_check(row_val, col_val);
+        } if ((board[row_val][col_val]->team =='B')){
+            struct peice* tmp = update_board(white_arr[1][3]->row_num, white_arr[1][3]->col_num, row_val, col_val);
+            if (white_check(row_val, col_val)){ 
+                return true;
+            } else return false;
+        }else return false;
+}
+
+bool black_checkmate_xwrap(int row_val, int col_val){
+        if ((!board[row_val][col_val]) || (board[row_val][col_val]->team =='W')){
+            return black_check(row_val, col_val);
+        } else return false;
+}
+
+bool white_checkmate(void){
+    int king_row = white_arr[1][3]->row_num;
+    int king_col = white_arr[1][3]->col_num ;
+
+    for(int j=-1;j<2;j++){
+        int tmp_row = king_row+j;
+        for(int i=-1; i<2;i++){
+            int tmp_col = king_col+i;
+            if (inside_board(tmp_col) && inside_board(tmp_row)) {
+                if(!white_checkmate_xwrap(tmp_row,tmp_col)) return false;
+            } else continue;
+        }
+    }
+    return false;
+    
+}
+
+bool black_checkmate(void){
+    int king_row = black_arr[1][3]->row_num;
+    int king_col = black_arr[1][3]->col_num ;
+   for(int j=-1;j<2;j++){
+        int tmp_row = king_row+j;
+        for(int i=-1; i<2;i++){
+            int tmp_col = king_col+i;
+            if (inside_board(tmp_col) && inside_board(tmp_row)) {
+                if(!black_checkmate_xwrap(tmp_row,tmp_col)) return false;
+            } else continue;
+        }
+    }
+    return false;
+    
+}
+
+bool white_stale(void){
+    int king_row = white_arr[1][3]->row_num;
+    int king_col = white_arr[1][3]->col_num ;
+
+    if (!white_checkmate()) return false;
+
+    for (int row=0; row<2; row++){
+        for(int col=0;col<8;col++){
+            if (white_arr[row][col]->eliminated) continue;
+            int row_no = white_arr[row][col]->row_num;
+            int col_no = white_arr[row][col]->col_num;
+            if(white_arr[row][col]->name == 'P'){
+                struct peice * tmp = white_arr[row][col];
+                board[row_no][col_no] = NULL;
+                bool temp_check =white_check(king_row, king_col);
+                board[row_no][col_no] = tmp;
+                if(temp_check) continue;
+
+                if (!board[row_no+1][col_no]) {
+                    return false;
+                } else if (board[row_no+1][col_no+1]) {
+                    if(board[row_no+1][col_no+1]->team == 'b') return false;
+                }
+            } else {
+                struct peice * tmp = white_arr[row][col];
+                board[row_no][col_no] = NULL;
+                bool temp_check =white_check(king_row, king_col);
+                board[row_no][col_no] = tmp;
+                if(!temp_check) return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool black_stale(void){
+    int king_row = black_arr[1][3]->row_num;
+    int king_col = black_arr[1][3]->col_num;
+
+    if (!black_checkmate) return false;
+
+    for (int row=0; row<2; row++){
+        for(int col=0;col<8;col++){
+            if (black_arr[row][col]->eliminated) continue;
+            int row_no = black_arr[row][col]->row_num;
+            int col_no = black_arr[row][col]->col_num;
+            if(black_arr[row][col]->name == 'p'){
+                struct peice * tmp = black_arr[row][col];
+                board[row_no][col_no] = NULL;
+                bool temp_check =black_check(king_row, king_col);
+                board[row_no][col_no] = tmp;
+                if(temp_check) continue;
+
+                if (!board[row_no][col_no-1]) {
+                    return false;
+                } else if (board[row_no+1][col_no-1]) {
+                    if(board[row_no+1][col_no-1]->team == 'w') return false;
+                } else if (board[row_no-1][col_no-1]) {
+                    if(board[row_no-1][col_no-1]->team == 'w') return false;
+                }
+            } else {
+                struct peice * tmp = black_arr[row][col];
+                board[row_no][col_no] = NULL;
+                bool temp_check =black_check(king_row, king_col);
+                board[row_no][col_no] = tmp;
+                if(!temp_check) return false;
+            }
+        }
+    }
+    return true;
+}
+
 void black_player();
 
 void white_player(){ 
