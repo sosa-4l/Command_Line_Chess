@@ -247,7 +247,85 @@ bool king_move(int old_row, int old_col, int new_row, int new_col) {
     } else return !(board[new_row][new_col]->team == board[old_row][old_col]->team);
 }
 
+struct peice *update_board (int old_row, int old_col, int new_row, int new_col) {
+    struct peice *tmp = board[new_row][new_col];
+    if (board[new_row][new_col]) {
+        board[new_row][new_col]->eliminated = 1;
+    }
+    board[new_row][new_col] = board[old_row][old_col]; 
+    board[old_row][old_col] = NULL;
+    board[new_row][new_col]->moves++;
+    board[new_row][new_col]->row_num = new_row;
+    board[new_row][new_col]->col_num = new_col;
+    return tmp;
+}
 
+void revert_board (struct peice* old_peice, int old_row, int old_col, int new_row, int new_col) {
+    if (old_peice) {
+        old_peice->eliminated = 0;
+    }
+    board[old_row][old_col] = board[new_row][new_col] ;
+    board[new_row][new_col] = old_peice; 
+    board[old_row][old_col]->moves--;
+    board[old_row][old_col]->row_num = old_row;
+    board[old_row][old_col]->col_num = old_col;
+}
+
+bool white_check(int king_row, int king_col) {
+    int col_no;
+    int row_no;
+    for(int row = 0; row<2; row++){
+        for (int col=0; col<8; col++){
+            if (black_arr[row][col]->eliminated) continue;
+
+            col_no = black_arr[row][col]->col_num;
+            row_no = black_arr[row][col]->row_num;
+
+            if(black_arr[row][col]->name == 'p' && pawn_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (black_arr[row][col]->name == 'b' && bishop_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (black_arr[row][col]->name == 'r' && rook_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (black_arr[row][col]->name == 'q' && queen_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (black_arr[row][col]->name == 'n' && knight_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (black_arr[row][col]->name == 'k' && king_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } 
+        }
+    }
+    return false;
+}
+
+bool black_check(int king_row, int king_col) {
+    int col_no;
+    int row_no;
+    for(int row = 0; row<2; row++){
+        for (int col=0; col<8; col++){
+            if (white_arr[row][col]->eliminated) continue;
+
+            col_no = white_arr[row][col]->col_num;
+            row_no = white_arr[row][col]->row_num;
+
+            if(white_arr[row][col]->name == 'P' && pawn_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (white_arr[row][col]->name == 'B' && bishop_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (white_arr[row][col]->name == 'R' && rook_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (white_arr[row][col]->name == 'Q' && queen_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (white_arr[row][col]->name == 'N' && knight_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } else if (white_arr[row][col]->name == 'K' && king_move(row_no, col_no, king_row, king_col)) {
+                return true;
+            } 
+        }
+    }
+    return false;
+}
 
 void black_player();
 
