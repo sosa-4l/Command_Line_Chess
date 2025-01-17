@@ -134,3 +134,13 @@ struct peice *black_arr[2][8] = {NULL};
     printf(" --------------------------------\n");
 }
 
+
+ int main(){
+    setlocale(LC_ALL, "");
+    black_init();
+    white_init();
+    board_init();
+    print_board();
+    white_player();
+    // printf("%c\n", board[1][1]->name);
+ }
