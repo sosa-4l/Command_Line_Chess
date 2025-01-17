@@ -107,3 +107,30 @@ struct peice *black_arr[2][8] = {NULL};
     }
  }
 
+ void print_board(){
+    printf("\n \n \n \n \n \n");
+    printf(" ");
+    for(int col= 0; col<8;col++){
+        printf(" %c  ", 72-col);
+    }
+    printf("\n");
+    printf(" --------------------------------\n");
+    for(int row=0; row<8; row++){
+        printf("|");
+        for(int col=0; col<8; col++){
+            if(!board[row][col]){
+                printf("   ");
+            } else{
+                printf(" %c ", board[row][col]->name);
+            }
+            printf("|");
+        }
+        int tmp = row;
+        printf("  %d\n", tmp+1);
+        if (row < 7) {
+            printf(" ---|---|---|---|---|---|---|---\n");
+        }
+    }
+    printf(" --------------------------------\n");
+}
+
